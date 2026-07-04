@@ -1,0 +1,158 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: white;
+    margin: 0;
+}
+
+/* NAVBAR FIX */
+.navbar {
+    background: #1e293b;
+    padding: 15px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #38bdf8;
+}
+
+.nav-links a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: white;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #38bdf8;
+}
+
+.container {
+    padding: 30px;
+    max-width: 800px;
+    margin: auto;
+    text-align: center; /* ADD THIS */
+}
+
+.form-box {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center; /* ADD THIS */
+}
+
+textarea {
+    width: 100%;
+    max-width: 600px;
+}
+
+button {
+    padding: 10px;
+    background: #38bdf8;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.result-box {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 10px;
+    white-space: pre-wrap;
+}
+
+.back-btn {
+    display: block;
+    margin-top: 20px;
+    color: #38bdf8;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.03);
+}
+
+.card h2 {
+    color: #38bdf8;
+}
+
+.card button {
+    margin-top: 10px;
+    background: #22c55e;
+}
+
+/* USER MENU */
+.user-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.nav-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.username {
+    color: white;
+    font-weight: 500;
+}
+
+/* DROPDOWN */
+.dropdown {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background: #0d1b2a;
+    border-radius: 10px;
+    padding: 10px;
+    display: none;
+    flex-direction: column;
+    min-width: 150px;
+    z-index: 999;
+}
+
+.dropdown a {
+    color: white;
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.dropdown a:hover {
+    background: #1b263b;
+}
+
+/* HOVER */
+.user-menu:hover .dropdown {
+    display: flex;
+}

@@ -1,0 +1,232 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<style>
+    /* --- Specific Styles for the Generation Area --- */
+    .workspace-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeInDown 0.6s ease-out;
+    }
+    
+    .workspace-header h2 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        letter-spacing: -0.5px;
+        color: var(--text-primary, #ffffff);
+    }
+
+    .workspace-header h2 .highlight {
+        background: var(--accent-gradient, linear-gradient(to right, #38bdf8, #818cf8));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .workspace-header p {
+        color: var(--text-secondary, #94a3b8);
+        font-size: 1.15rem;
+        max-width: 650px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .form-box {
+        width: 100%;
+        animation: fadeInUp 0.6s ease-out 0.2s backwards;
+    }
+
+    /* --- Interactive Suggestion Pills --- */
+    .suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+        margin-top: 1.5rem;
+    }
+
+    .suggestion-pill {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--text-secondary, #94a3b8);
+        padding: 0.6rem 1.2rem;
+        border-radius: 99px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(4px);
+    }
+
+    .suggestion-pill:hover {
+        background: rgba(56, 189, 248, 0.1);
+        border-color: var(--accent-primary, #38bdf8);
+        color: var(--text-primary, #ffffff);
+        transform: translateY(-2px);
+    }
+
+    /* --- Button Loading Spinner --- */
+    .spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- NEW ENHANCEMENTS: Features Section --- */
+    .features-section {
+        margin-top: 4rem;
+        animation: fadeInUp 0.6s ease-out 0.4s backwards;
+        width: 100%;
+    }
+
+    .features-title {
+        text-align: center;
+        color: var(--text-secondary, #94a3b8);
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(4px);
+    }
+
+    .feature-card:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(255, 255, 255, 0.15);
+        transform: translateY(-4px);
+    }
+
+    .feature-icon {
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+        color: var(--text-primary, #f8fafc);
+        font-size: 1.15rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .feature-card p {
+        color: var(--text-secondary, #94a3b8);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+</style>
+
+<!-- Hero Section to Hook the User -->
+<div class="workspace-header">
+    <h2>Turn Your Vision Into an <span class="highlight">Empire</span></h2>
+    <p>Describe your startup idea below, and let our AI instantly architect your business plan, tech stack, and marketing strategy.</p>
+</div>
+
+<!-- The Main Generation Form -->
+<form method="POST" class="form-box" id="ideaForm" onsubmit="showLoader()">
+    {% csrf_token %}
+    
+    <div class="input-group">
+        <!-- Reuses the premium textarea styles from your base.html -->
+        <textarea 
+            id="ideaInput"
+            name="idea" 
+            placeholder="E.g., An AI-powered app that helps people grow indoor plants by analyzing photos of their leaves..." 
+            required
+        ></textarea>
+
+        <!-- Reuses the premium generate-btn styles from your base.html -->
+        <button type="submit" class="generate-btn" id="submitBtn">
+            <span id="btnText">Build My Empire 🚀</span>
+            <div id="btnSpinner" class="spinner"></div>
+        </button>
+    </div>
+    
+    <!-- Quick-start Suggestions -->
+    <div class="suggestions">
+        <span class="suggestion-pill" onclick="fillIdea('A marketplace connecting local chefs with people hosting dinner parties.')">👨‍🍳 Local Chef Marketplace</span>
+        <span class="suggestion-pill" onclick="fillIdea('A SaaS platform that automates social media posting for real estate agents.')">🏡 Real Estate SaaS</span>
+        <span class="suggestion-pill" onclick="fillIdea('An eco-friendly subscription box delivering sustainable home goods.')">🌱 Eco Subscription Box</span>
+    </div>
+</form>
+
+<!-- NEW ENHANCEMENTS: What's Included Section -->
+<div class="features-section">
+    <h3 class="features-title">What gets built in seconds?</h3>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Business Plan</h3>
+            <p>Comprehensive market analysis, monetization models, and a structured growth roadmap.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💻</div>
+            <h3>Tech Stack</h3>
+            <p>Tailored recommendations for frameworks, databases, and deployment architectures.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Marketing Strategy</h3>
+            <p>Actionable go-to-market plans, target audience profiles, and acquisition channels.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Page Specific JavaScript -->
+<script>
+    // Fills the textarea when a user clicks a suggestion pill
+    function fillIdea(text) {
+        const textarea = document.getElementById('ideaInput');
+        textarea.value = text;
+        textarea.focus();
+    }
+
+    // Handles the smooth loading animation on the form button
+    function showLoader() {
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Swap text for spinner
+        btnText.style.display = 'none';
+        btnSpinner.style.display = 'block';
+        
+        // Make button look disabled while loading
+        submitBtn.style.opacity = '0.8';
+        submitBtn.style.pointerEvents = 'none';
+        submitBtn.style.transform = 'translateY(0)'; // lock hover effect
+    }
+</script>
+{% endblock %}

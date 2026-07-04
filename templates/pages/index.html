@@ -1,0 +1,320 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* --- Smooth Scrolling for the page --- */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* --- Overriding base.html container for a full-width layout --- */
+    .container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important; 
+    }
+
+    /* --- Fullscreen Background Hero --- */
+    .fullscreen-hero {
+        position: relative;
+        width: 100vw;
+        /* Viewport height minus the approximate height of the navbar */
+        height: calc(100vh - 80px); 
+        background-image: url("{% static 'images/bg_image.png' %}");
+        background-size: cover;
+        background-position: center;
+        /* Removed background-attachment: fixed; so the button scrolls perfectly WITH the image */
+        overflow: hidden;
+    }
+
+    /* Subtle gradient overlay to make sure the button and text stand out */
+    .fullscreen-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(11, 17, 32, 0.7) 0%, rgba(11, 17, 32, 0.1) 50%, rgba(11, 17, 32, 0.5) 100%);
+        pointer-events: none;
+    }
+
+    /* --- Get Started Button Overlay --- */
+    .get-started-wrapper {
+        position: absolute;
+        z-index: 10;
+        /* Increased from 65% to 75% to place it below the AI-Powered text */
+        top: 75%; 
+        left: 28%;
+        transform: translate(-50%, -50%);
+    }
+
+    .get-started-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--accent-gradient);
+        color: white;
+        text-decoration: none;
+        padding: 1.25rem 3.5rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border-radius: 99px;
+        box-shadow: 0 10px 30px -5px rgba(59, 130, 246, 0.6);
+        transition: all 0.3s ease;
+        animation: fadeInUp 1s ease-out 0.5s backwards;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .get-started-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px -5px rgba(59, 130, 246, 0.8);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: white;
+    }
+
+    /* --- NEW: Landing Page Sections --- */
+    .landing-section {
+        padding: 6rem 2rem;
+        background-color: var(--bg-color);
+        position: relative;
+    }
+
+    .landing-section.alt-bg {
+        background-color: rgba(15, 23, 42, 0.3); /* Slightly different background for contrast */
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .section-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .section-title h2 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        letter-spacing: -1px;
+    }
+
+    .section-title h2 .highlight {
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .section-title p {
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* --- Features Grid --- */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2.5rem;
+    }
+
+    .feature-card {
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 24px;
+        padding: 2.5rem;
+        transition: all 0.3s ease;
+        text-align: left;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        border-color: rgba(56, 189, 248, 0.3);
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.1);
+    }
+
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        background: rgba(56, 189, 248, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        color: var(--accent-primary);
+    }
+
+    .feature-card h3 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+
+    /* --- Steps Grid --- */
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        counter-reset: step-counter;
+    }
+
+    .step-card {
+        position: relative;
+        padding: 2.5rem;
+        text-align: center;
+    }
+
+    .step-number {
+        width: 48px;
+        height: 48px;
+        background: var(--accent-gradient);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
+    }
+
+    .step-card h3 {
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .step-card p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* Line connecting steps (visible on desktop) */
+    @media (min-width: 900px) {
+        .step-card:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 3.5rem;
+            right: -1rem;
+            width: 2rem;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 0;
+        }
+    }
+
+    /* --- Bottom CTA --- */
+    .bottom-cta {
+        text-align: center;
+        padding: 6rem 2rem;
+        background: radial-gradient(circle at center, rgba(14, 165, 233, 0.1) 0%, var(--bg-color) 70%);
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<!-- Fullscreen Hero Image Area -->
+<div class="fullscreen-hero">
+    <div class="get-started-wrapper">
+        <!-- Directs users to dashboard -->
+        <a href="/dashboard/" class="get-started-btn">Get Started 🚀</a>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="landing-section">
+    <div class="section-inner">
+        <div class="section-title">
+            <h2>Everything You Need to <span class="highlight">Build an Empire</span></h2>
+            <p>Our AI doesn't just give you ideas. It acts as your personal co-founder, architecting every detail of your business from scratch.</p>
+        </div>
+
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
+                <h3>Business Planning</h3>
+                <p>Generate investor-ready business plans instantly. We define your target audience, revenue models, and unique value propositions.</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                </div>
+                <h3>Tech Stack Architecture</h3>
+                <p>No technical background? No problem. Get a complete, scalable technology stack tailored specifically for your app or software.</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                </div>
+                <h3>Go-To-Market Strategy</h3>
+                <p>Discover exactly how to acquire your first 1,000 customers with customized marketing channels and growth hacks.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How it Works Section -->
+<section class="landing-section alt-bg">
+    <div class="section-inner">
+        <div class="section-title">
+            <h2>From Vision to Reality in <span class="highlight">3 Steps</span></h2>
+            <p>Stop overthinking. Start building. Here is how Empire Builder GPT turns your raw ideas into actionable blueprints.</p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Share Your Vision</h3>
+                <p>Write a single sentence about the problem you want to solve or the product you want to build.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>AI Architecting</h3>
+                <p>Our advanced models analyze the market and instantly generate a comprehensive, structured blueprint.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Launch Your Empire</h3>
+                <p>Follow the generated step-by-step roadmap, save your ideas to your dashboard, and start executing.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bottom CTA -->
+<section class="bottom-cta">
+    <div class="section-inner">
+        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1.5rem;">Ready to build something amazing?</h2>
+        <a href="/dashboard/" class="get-started-btn" style="position: static; transform: none; animation: none;">Start Building Now 🚀</a>
+    </div>
+</section>
+
+{% endblock %}
